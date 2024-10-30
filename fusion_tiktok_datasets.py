@@ -3,9 +3,6 @@
 import pandas as pd
 from IPython.display import display
 
-import os
-print(os.getcwd())
-
 
 def read_tiktok_excel(path:str):
     """read excel file and create associated pandas dataframe.
