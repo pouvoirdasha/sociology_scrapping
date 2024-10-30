@@ -8,6 +8,14 @@ print(os.getcwd())
 
 
 def read_tiktok_excel(path:str):
+    """read excel file and create associated pandas dataframe.
+
+    Args:
+        path (str): path to excel file (should look like "data/123456.xlsx")
+
+    Returns:
+        pandas dataframe: corresponding pandas dataframe, with an additional column ("post_url")
+    """
     ## path = path to excel file (should be "data/123456.xlsx").
 
     df = pd.read_excel(path, index_col=0, skiprows=lambda x: x in [i for i in range(14)]) #skip 14 premières lignes qui contiennent metadata.
@@ -17,7 +25,7 @@ def read_tiktok_excel(path:str):
     df_posturl = list(pd.read_excel(path, skiprows=[0], nrows=0))
     print(df_posturl)
     df_posturl = df_posturl[1]
-    df['posturl'] = [df_posturl for _ in range(df.shape[0])] # add new column to df
+    df['post_url'] = [df_posturl for _ in range(df.shape[0])] # add new column to df
 
     # à noter si besoin qu'il y a aussi les infos de 1- date de scraping 
     # et 2- date de publication (relativement à la date de scraping)
