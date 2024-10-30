@@ -22,12 +22,36 @@ config = AutoConfig.from_pretrained(MODEL)
 model = AutoModelForSequenceClassification.from_pretrained(MODEL)
 model.save_pretrained(MODEL)
 
-text = "j'ai adoré le connard de chauffeur"
-text = preprocess(text)
-encoded_input = tokenizer(text, return_tensors='pt')
-output = model(**encoded_input)
-scores = output[0][0].detach().numpy()
-scores = softmax(scores)
+
+def analyze_comment(comment):
+    comment = preprocess(comment)
+    encoded_input = tokenizer(comment, return_tensors='pt')
+    output = model(**encoded_input)
+    scores = output[0][0].detach().numpy()
+    scores = softmax(scores)
+
+    return scores
+
+def analyze_all_comments(dataset): #arg dataset à préciser
+    scores_dict = {}
+    for comment in dataset:
+        scores = analyze_comment(comment)
+        scores_dict[comment] = scores
+
+    return scores_dict
+
+
+########## Pour gérer l'affichage des scores ##########@
+# Print labels and scores
+ranking = np.argsort(scores)
+ranking = ranking[::-1]
+for i in range(scores.shape[0]):
+    l = config.id2label[ranking[i]]
+    s = scores[ranking[i]]
+    print(f"{i+1}) {l} {np.round(float(s), 4)}")
+######### à voir en fonction de la gueuel eque prned notre dataset de commentaires. Probablement devoir rajouter 
+# des infos sur chaque commentaire pour avoir un identifiant unique?
+
 
 # # TF
 # model = TFAutoModelForSequenceClassification.from_pretrained(MODEL)
@@ -38,12 +62,4 @@ scores = softmax(scores)
 # output = model(encoded_input)
 # scores = output[0][0].numpy()
 # scores = softmax(scores)
-
-# Print labels and scores
-ranking = np.argsort(scores)
-ranking = ranking[::-1]
-for i in range(scores.shape[0]):
-    l = config.id2label[ranking[i]]
-    s = scores[ranking[i]]
-    print(f"{i+1}) {l} {np.round(float(s), 4)}")
 
