@@ -20,7 +20,6 @@ def read_tiktok_excel(path:str):
     ### recover intersting metadata on the post (url of post)
 
     df_posturl = list(pd.read_excel(path, skiprows=[0], nrows=0))
-    print(df_posturl)
     df_posturl = df_posturl[1]
     df['post_url'] = [df_posturl for _ in range(df.shape[0])] # add new column to df
 
@@ -44,4 +43,6 @@ def test_codes():
 
 
 if __name__ == "__main__":
+    print('------------ Launching Tests')
     test_codes()
+    print('------------ Tests Complete')
