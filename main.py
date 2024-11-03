@@ -17,17 +17,11 @@ def main():
         "fxv-YhT3Ixc", #165
         "EWUK5A-3LSI", #862
         "y4BKfR5t1l8", #427
-
+        "8zPor9l9SwI", #11 838 #WILL CAP THE COMMENTS LIMIT !
         "w1u9IgepfAU", #393
         "YF7Hs4GeJkQ", #1 700
         "1EuF7yfoyDE"  #2 372
     ]
-
-        #"8zPor9l9SwI", #11 838 #WILL CAP THE COMMENTS LIMIT !
-        # "w1u9IgepfAU", #393
-        # "YF7Hs4GeJkQ", #1 700
-        # "1EuF7yfoyDE"  #2 372
-        # ]
 
     #yt_ids_to_scrape=["Awfy38D90gk"] #for debugging
 
