@@ -118,41 +118,51 @@ def process_json(response, all_comments, videoId): #function inspired from https
 
 def write_to_csv(comments:list, out_filename:str):
 
-    with open(out_filename, 'w') as fichier: #remettre le fichier de résultats à 0 pour éviter de mélanger.
+    with open("results/"+out_filename, 'w') as fichier: #remettre le fichier de résultats à 0 pour éviter de mélanger.
         fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-        header = comments[0].keys()
-        fichier_writer.writerows(header)
+        header = comments[0].keys()# ['Timestamp', 'Username', 'VideoID', 'Comment', 'Date', 'Modified', 'NbLikes']
+        print(header)
+        print(comments[0].values())
+        fichier_writer.writerow(header)
 
-    with open("data/"+out_filename, 'a', encoding = 'utf-8') as fichier:
+    with open("results/"+out_filename, 'a', encoding = 'utf-8') as fichier:
             fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            header = comments[0].keys()
-            fichier_writer.writerow(header)
-
             for comment in comments:
-                print(comment)
                 fichier_writer.writerow(comment.values())
 
 
 def scrape_youtube_videos(ids_to_scrape, out_filename, out):
     #ids_to_scrape contains all video ids that we wanna scrape.
+    comments=[]
 
     youtube = initialize_youtube_api() #initialize scraper (api key, etc)
 
-    print("----------- Beginning YouTube Scraping...")
-    for videoId in ids_to_scrape:
-        comments = scrape_comments_from_video(videoId, youtube)
+    print("==================== Beginning YouTube Scraping... ==================== \n")
+    n=len(ids_to_scrape)
+    for i,videoId in enumerate(ids_to_scrape):
+        comments += scrape_comments_from_video(videoId, youtube) 
+        progress(int(i+1/n*100))
+    print('\n')
 
     if out:
         write_to_csv(comments,out_filename)
-        print(f"Wrote results to data/{out_filename}")
+        print(f'\n Wrote results to "results/{out_filename}"')
 
-    print(f'Number of comment threads scraped: {len(comments)}.')
-    print("----------- Scraping done.")
+    print(f'Number of comments (including answers) scraped: {len(comments)}.')
+    print("\n ==================== Scraping done. ====================")
 
     return comments
 
+
+
+def progress(percent=0, width=30): #simple progress bar
+    left = width * percent // 100
+    right = width - left
+    print('\r[', '#' * left, ' ' * right, ']',
+          f' {percent:.0f}%',
+          sep='', end='', flush=True)
 
 
 
@@ -162,7 +172,7 @@ def test_codes(): #test with a mininmal video.
      ###################### TO MODIFY DEPENDING ON USE ######################
     ## define name of file returned (if anything is returned at all)
     out = True
-    out_filename= "youtube_scraped_comments.csv"
+    out_filename= "YouTube-minimal-test.csv"
 
     ## define videos to scrape
     # videoIds_to_scrape =   ["Js4qqwdjA9M"]  # TO COMPLETE
@@ -172,9 +182,6 @@ def test_codes(): #test with a mininmal video.
 
     comments = scrape_youtube_videos(videoIds_to_scrape,out_filename,out)
 
-
-    print(f'Number of comment threads scraped: {len(comments)}.')
-    print("----------- Scraping done.")
 
 
 
