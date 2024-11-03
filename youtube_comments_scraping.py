@@ -1,6 +1,8 @@
 ##### Scrape YouTube comments from a given youtube video
 
 # documentation source: https://developers-dot-devsite-v2-prod.appspot.com/youtube/v3/code_samples/code_snippets_a4196ae5378e1e8e3601e8aa898aca07716d4d415abf2b19bdd8ec6871fda96b.frame?hl=fr#
+# also thanks to https://github.com/analyticswithadam/Python/blob/main/Pull_all_Comments_and_Replies_for_YouTube_Playlists.ipynb for showing how to get ALL comments.
+
 
 # -*- coding: utf-8 -*-
 
@@ -13,11 +15,6 @@ import csv
 
 import googleapiclient.discovery
 
-
-#protect API key (you can create your own at https://console.cloud.google.com/apis/api/youtube.googleapis.com
-with open('data/dev_key.txt', newline='') as devkeyfile:
-    devkey = devkeyfile.readline()
-print(devkey[0])
 
 
 def get_dev_key():
@@ -51,46 +48,135 @@ def scrape_comments_from_video(videoId, youtube):
     Returns:
         json: response to the request (comments in json format).
     """
-    request = youtube.commentThreads().list(
-        part="snippet,replies",
-        videoId=videoId,
-        prettyPrint=True
-    )
-    response = request.execute()
+    next_page_token = None
+    CONTINUER=True
+    next_page_token=None
+    all_comments = []
 
-    return response
+    while CONTINUER:
 
-def process_json(response):
-    pass
+        request = youtube.commentThreads().list(
+            part="snippet,replies",    #,replies",
+            order="time",
+            videoId=videoId,
+            pageToken=next_page_token,
+            textFormat="plainText"
+        )
+        #maxResults=100, 
+        response = request.execute()
 
-def write_to_csv(data:list, out_filename:str):
+        all_comments = process_json(response, all_comments, videoId) #process json data and put it in a list
 
-    with open(out_filename, 'a', encoding = 'utf-8') as fichier:
+        #go to next page of results to get *all* comments.
+        next_page_token = response.get('nextPageToken')
+        CONTINUER = 'nextPageToken' in response
+
+    return all_comments
+
+
+def process_json(response, all_comments, videoId): #function inspired from https://github.com/analyticswithadam/Python/blob/main/Pull_all_Comments_and_Replies_for_YouTube_Playlists.ipynb 
+    """Append comments (and related answers) contained in response to the list containing all comments. videoId is specified to track where the comments come from.
+
+    Args:
+        response (json): _description_
+        all_comments (list): _description_
+        videoId (str): _description_
+
+    Returns:
+        list: all_comments list to which was appended all the comments contained in the API response.
+    """
+
+    for item in response['items']:
+            comment = item['snippet']["topLevelComment"]["snippet"]             #A VOIR ICI pour si on peut récup replies par la mm occasion avec l'argument "replies"
+            all_comments.append({
+                'Timestamp': comment['publishedAt'],
+                'Username': comment['authorDisplayName'],
+                'VideoID': videoId,
+                'Comment': comment['textDisplay'],
+                'Date': comment['updatedAt'] if 'updatedAt' in comment else comment['publishedAt'],
+                'Modified': True if 'updatedAt' in comment else False,
+                'NbLikes': comment['likeCount']
+            })
+
+
+            if "replies" in item: #s'il y a des réponses au commentaire "père" on les récupère aussi.
+                replies = item['replies']['comments']
+                for comment in replies:
+                    comment = comment['snippet']
+                    all_comments.append({
+                        'Timestamp': comment['publishedAt'],
+                        'Username': comment['authorDisplayName'],
+                        'VideoID': videoId,
+                        'Comment': comment['textDisplay'],
+                        'Date': comment['updatedAt'] if 'updatedAt' in comment else comment['publishedAt'],
+                        'Modified': True if 'updatedAt' in comment else False,
+                        'NbLikes': comment['likeCount']
+                    })
+
+    return all_comments
+
+
+def write_to_csv(comments:list, out_filename:str):
+
+    with open(out_filename, 'w') as fichier: #remettre le fichier de résultats à 0 pour éviter de mélanger.
+        fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+
+        header = comments[0].keys()
+        fichier_writer.writerows(header)
+
+    with open("data/"+out_filename, 'a', encoding = 'utf-8') as fichier:
             fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-            fichier_writer.writerow(data)
 
-def main():
+            header = comments[0].keys()
+            fichier_writer.writerow(header)
 
-    ###################### TO MODIFY DEPENDING ON USE ######################
+            for comment in comments:
+                print(comment)
+                fichier_writer.writerow(comment.values())
+
+
+def scrape_youtube_videos(ids_to_scrape, out_filename, out):
+    #ids_to_scrape contains all video ids that we wanna scrape.
+
+    youtube = initialize_youtube_api() #initialize scraper (api key, etc)
+
+    print("----------- Beginning YouTube Scraping...")
+    for videoId in ids_to_scrape:
+        comments = scrape_comments_from_video(videoId, youtube)
+
+    if out:
+        write_to_csv(comments,out_filename)
+        print(f"Wrote results to data/{out_filename}")
+
+    print(f'Number of comment threads scraped: {len(comments)}.')
+    print("----------- Scraping done.")
+
+    return comments
+
+
+
+
+
+def test_codes(): #test with a mininmal video.
+
+     ###################### TO MODIFY DEPENDING ON USE ######################
     ## define name of file returned (if anything is returned at all)
     out = True
     out_filename= "youtube_scraped_comments.csv"
 
     ## define videos to scrape
-    videoIds_to_scrape = ["Js4qqwdjA9M"]  # TO COMPLETE
+    # videoIds_to_scrape =   ["Js4qqwdjA9M"]  # TO COMPLETE
+    videoIds_to_scrape = ["Awfy38D90gk"] #test video with only 6 coms (2 of them being replies)
     ###################### TO MODIFY DEPENDING ON USE ######################
 
-    ## initialize scraper
-    youtube = initialize_youtube_api()
 
-    ## scrape comments
-    for videoId in videoIds_to_scrape:
-        response = scrape_comments_from_video(videoId, youtube)
-        processed_response = process_json(response)
-        if out:
-            write_to_csv(processed_response, out_filename)
+    comments = scrape_youtube_videos(videoIds_to_scrape,out_filename,out)
+
+
+    print(f'Number of comment threads scraped: {len(comments)}.')
+    print("----------- Scraping done.")
 
 
 
 if __name__ == "__main__":
-    main()
+    test_codes()
