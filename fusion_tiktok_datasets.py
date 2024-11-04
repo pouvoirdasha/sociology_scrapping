@@ -19,9 +19,23 @@ def read_tiktok_excel(path:str):
 
     ### recover intersting metadata on the post (url of post)
 
-    df_posturl = list(pd.read_excel(path, skiprows=[0], nrows=0))
-    df_posturl = df_posturl[1]
-    df['post_url'] = [df_posturl for _ in range(df.shape[0])] # add new column to df
+# I am keeping your code here in case : 
+    #df_posturl = list(pd.read_excel(path, skiprows=[0], nrows=0))
+    #df_posturl = df_posturl[1]
+    #df['post_url'] = [df_posturl for _ in range(df.shape[0])] # add new column to df
+    
+    #recovering first few lines 
+    df_metadata = pd.read_excel(path, usecols = [0,1],nrows=13)
+    url = df_metadata.iloc[0,1]
+    nb_coms_shown = df_metadata.iloc[11,1]
+    nb_com_scraped = df_metadata.iloc[10,1]
+    diff = df_metadata.iloc[12,1]
+
+    df['post_url'] = [url for _ in range(df.shape[0])]
+    df['shown_comments']= [nb_coms_shown for _ in range(df.shape[0])]
+    df['scraped_comments']= [nb_com_scraped for _ in range(df.shape[0])]
+    df['difference']= [diff for _ in range(df.shape[0])]
+    
 
     # à noter si besoin qu'il y a aussi les infos de 1- date de scraping 
     # et 2- date de publication (relativement à la date de scraping)
