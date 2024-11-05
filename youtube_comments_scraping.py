@@ -12,6 +12,7 @@
 
 import os
 import csv
+import pandas as pd
 
 import googleapiclient.discovery
 
@@ -118,19 +119,22 @@ def process_json(response, all_comments, videoId): #function inspired from https
 
 def write_to_csv(comments:list, out_filename:str):
 
-    with open("results/"+out_filename, 'w') as fichier: #remettre le fichier de résultats à 0 pour éviter de mélanger.
-        fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    # with open("results/"+out_filename, 'w') as fichier: #remettre le fichier de résultats à 0 pour éviter de mélanger.
+    #     fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-        header = comments[0].keys()# ['Timestamp', 'Username', 'VideoID', 'Comment', 'Date', 'Modified', 'NbLikes']
-        print(header)
-        print(comments[0].values())
-        fichier_writer.writerow(header)
+    #     header = comments[0].keys()# ['Timestamp', 'Username', 'VideoID', 'Comment', 'Date', 'Modified', 'NbLikes']
+    #     print(header)
+    #     print(comments[0].values())
+    #     fichier_writer.writerow(header)
 
-    with open("results/"+out_filename, 'a', encoding = 'utf-8') as fichier:
-            fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+    # with open("results/"+out_filename, 'a', encoding = 'utf-8') as fichier:
+    #         fichier_writer = csv.writer(fichier, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
 
-            for comment in comments:
-                fichier_writer.writerow(comment.values())
+    #         for comment in comments:
+    #             fichier_writer.writerow(comment.values())
+
+    df = pd.DataFrame(comments, columns=comments[0].keys())
+    df.to_csv("results/"+out_filename)
 
 
 def scrape_youtube_videos(ids_to_scrape, out_filename, out):
