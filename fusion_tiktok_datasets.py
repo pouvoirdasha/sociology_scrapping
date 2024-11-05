@@ -44,16 +44,35 @@ def read_tiktok_excel(path:str):
 
 def concatTikTok(d1, d2):
     return pd.concat([d1,d2])
+
+def concatAllTikTok(*data): #concatenate all dataframes contained in data iterable.
+
+    for i,df in enumerate(data):
+        if i==0:
+            df0=df #on garde le 1er df auquel on va ajouter tt le monde.
+        else:
+            df0 = concatTikTok(df0,df) #rajouter les df un à un - c moche mais ça fonctionnera pour notre cas.
+
+    return df0
+
+    
     
 
 def test_codes():
 
     d1 = read_tiktok_excel("data/Comments_1729173430.39675.xlsx")
     d2 = read_tiktok_excel("data/Comments_1729173430.39675 copie.xlsx")
+    d3= read_tiktok_excel("data/Comments_1729173430.39675.xlsx")
 
     concatenated_dataset = concatTikTok(d1,d2)
 
+    full_concatenation = concatAllTikTok(d1,d2,d3)
+
     #display(concatenated_dataset)
+    #display(full_concatenation) #2353 rows
+
+def coucou(*args):
+    return [x for x in args]
 
 
 if __name__ == "__main__":
