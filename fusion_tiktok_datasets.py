@@ -60,9 +60,9 @@ def concatAllTikTok(*data): #concatenate all dataframes contained in data iterab
 
 def test_codes():
 
-    d1 = read_tiktok_excel("data/Comments_1729173430.39675.xlsx")
-    d2 = read_tiktok_excel("data/Comments_1729173430.39675 copie.xlsx")
-    d3= read_tiktok_excel("data/Comments_1729173430.39675.xlsx")
+    d1 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
+    d2 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
+    d3= read_tiktok_excel("data/test_tiktok_fusion.xlsx")
 
     concatenated_dataset = concatTikTok(d1,d2)
 
