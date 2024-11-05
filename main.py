@@ -1,7 +1,10 @@
 import datetime
-date = datetime.datetime.now()
+date = datetime.datetime.now() #to name files with name
+import os
 
 from youtube_comments_scraping import scrape_youtube_videos
+
+from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
 
 
 def main():
@@ -26,15 +29,34 @@ def main():
     #yt_ids_to_scrape=["Awfy38D90gk"] #for debugging
 
 
-    comments = scrape_youtube_videos(yt_ids_to_scrape,out_filename,out)
+    #comments = scrape_youtube_videos(yt_ids_to_scrape,out_filename,out)
 
-    print(f"Expected number of comments= {549+165+862+427+393+1700+2372}") #+11838 avec la grosse vidéo.
+    # print(f"Actual Number of YouTube comments: {len(comments)}. | Expected number of YouTube comments= {549+165+862+427+393+1700+2372+11838}") #+11838 avec la grosse vidéo.
 
 
     ##############################################################################################################################################################################
     ########################################################################## MERGE TIKTOK EXCEL FILES ##########################################################################
 
-    tiktok_excel_files = 
+    dir_to_tiktok_files = "data/tiktok_comments/"
+    tiktok_excel_files = []
+    
+    for tiktok_filename in os.listdir(dir_to_tiktok_files):
+        tiktok_file = read_tiktok_excel(dir_to_tiktok_files + tiktok_filename)
+        tiktok_excel_files.append(tiktok_file)
+
+    out = True
+    out_filename= f"TikTok-comments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
+
+    concatenated_tiktok = concatAllTikTok(out, out_filename, *tiktok_excel_files)
+
+    print(f"Merged together {concatenated_tiktok.shape[0]} TikTok Comments")
+
+
+
+
+
+
+
 
 
 

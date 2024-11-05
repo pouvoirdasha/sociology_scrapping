@@ -1,6 +1,7 @@
 ###### Code pour fusionner deux fichiers excel renvoyés par la méthode de scrapping TikTok
 
 import pandas as pd
+import csv
 from IPython.display import display
 
 
@@ -45,7 +46,7 @@ def read_tiktok_excel(path:str):
 def concatTikTok(d1, d2):
     return pd.concat([d1,d2])
 
-def concatAllTikTok(*data): #concatenate all dataframes contained in data iterable.
+def concatAllTikTok(out, out_filename, *data): #concatenate all dataframes contained in data iterable.
 
     for i,df in enumerate(data):
         if i==0:
@@ -53,29 +54,30 @@ def concatAllTikTok(*data): #concatenate all dataframes contained in data iterab
         else:
             df0 = concatTikTok(df0,df) #rajouter les df un à un - c moche mais ça fonctionnera pour notre cas.
 
-    return df0
+    if out:
+        df0.to_csv("results/" + out_filename)
 
-    
+    return df0
     
 
 def test_codes():
+    out=False
+    out_filename=""
 
     d1 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
     d2 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
-    d3= read_tiktok_excel("data/test_tiktok_fusion.xlsx")
+    d3 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
 
     concatenated_dataset = concatTikTok(d1,d2)
 
-    full_concatenation = concatAllTikTok(d1,d2,d3)
+    full_concatenation = concatAllTikTok(out, out_filename, d1,d2,d3)
 
     #display(concatenated_dataset)
     #display(full_concatenation) #2353 rows
 
-def coucou(*args):
-    return [x for x in args]
 
 
 if __name__ == "__main__":
-    print('------------ Launching Tests')
+    print('------------ TikTok FUSION: Launching Tests')
     test_codes()
     print('------------ Tests Complete')
