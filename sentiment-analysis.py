@@ -13,7 +13,9 @@ def preprocess(text):
         new_text.append(t)
     return " ".join(new_text)
 
-MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
+# MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
+MODEL = f"Lyreck/finetune-tiktok-brat5" #finetuned model
+
 
 tokenizer = AutoTokenizer.from_pretrained(MODEL)
 config = AutoConfig.from_pretrained(MODEL)
@@ -41,14 +43,31 @@ def analyze_all_comments(dataset): #arg dataset à préciser
     return scores_dict
 
 
+def test():
+    text = "kamala is brat"
+
+    scores_dict = analyze_all_comments([text])
+
+    for comment in scores_dict.keys():
+        scores = scores_dict[comment]
+
+        ranking = np.argsort(scores)
+        ranking = ranking[::-1]
+        for i in range(scores.shape[0]):
+            l = config.id2label[ranking[i]]
+            s = scores[ranking[i]]
+            print(f"{i+1}) {l} {np.round(float(s), 4)}")
+
+
+
 ########## Pour gérer l'affichage des scores ##########@
 # Print labels and scores
-ranking = np.argsort(scores)
-ranking = ranking[::-1]
-for i in range(scores.shape[0]):
-    l = config.id2label[ranking[i]]
-    s = scores[ranking[i]]
-    print(f"{i+1}) {l} {np.round(float(s), 4)}")
+# ranking = np.argsort(scores)
+# ranking = ranking[::-1]
+# for i in range(scores.shape[0]):
+#     l = config.id2label[ranking[i]]
+#     s = scores[ranking[i]]
+#     print(f"{i+1}) {l} {np.round(float(s), 4)}")
 ######### à voir en fonction de la gueuel eque prned notre dataset de commentaires. Probablement devoir rajouter 
 # des infos sur chaque commentaire pour avoir un identifiant unique?
 
@@ -63,3 +82,6 @@ for i in range(scores.shape[0]):
 # scores = output[0][0].numpy()
 # scores = softmax(scores)
 
+
+if __name__ == "__main__":
+    test()

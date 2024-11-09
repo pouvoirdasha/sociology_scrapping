@@ -52,9 +52,11 @@ def main():
     print(f"Merged together {concatenated_tiktok.shape[0]} TikTok Comments")
 
 
+    ##############################################################################################################################################################################
+    ############################################################################# SENTIMENT ANALYSIS #############################################################################
 
-
-
+    # il faut que les commentaires soient donnés et analysés dans un ordre spécifique, afin que l'on puisse rajouter la colonne aux datasets et ainsi analyser les données
+    # dans leur ensemble.
 
 
 
