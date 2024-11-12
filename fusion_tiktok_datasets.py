@@ -31,11 +31,19 @@ def read_tiktok_excel(path:str):
     nb_coms_shown = df_metadata.iloc[11,1]
     nb_com_scraped = df_metadata.iloc[10,1]
     diff = df_metadata.iloc[12,1]
+    publisher = df_metadata.iloc[2,1]
+    post_likes = df_metadata.iloc[5,1]
+    post_shares = df_metadata.iloc[6,1]
+    post_description = df_metadata.iloc[7,1]
 
     df['post_url'] = [url for _ in range(df.shape[0])]
     df['shown_comments']= [nb_coms_shown for _ in range(df.shape[0])]
     df['scraped_comments']= [nb_com_scraped for _ in range(df.shape[0])]
     df['difference']= [diff for _ in range(df.shape[0])]
+    df['publisher'] = [publisher for _ in range(df.shape[0])]
+    df['post_likes'] = [post_likes for _ in range(df.shape[0])]
+    df['post_shares'] = [post_shares for _ in range(df.shape[0])]
+    df['post_description'] = [post_description for _ in range(df.shape[0])]
     
 
     # à noter si besoin qu'il y a aussi les infos de 1- date de scraping 
