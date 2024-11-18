@@ -3,7 +3,7 @@
 import pandas as pd
 import csv
 from IPython.display import display
-from datetime import datetime #to get scraped date
+from datetime import datetime, timedelta #to get scraped date
 
 
 def read_tiktok_excel(path:str):
@@ -53,6 +53,8 @@ def read_tiktok_excel(path:str):
 
 
     df["Time"] = df["Time"].apply(harmonize_dates, args=[date_scraped]) #remove the "Il y a 3 jours" and change them to datetimes.
+    #display(df["Time"])
+
 
     # à noter si besoin qu'il y a aussi les infos de 1- date de scraping 
     # et 2- date de publication (relativement à la date de scraping)
@@ -68,18 +70,26 @@ def harmonize_dates(comment_date, scraping_date):
         df (pandas datagrame): the dataframe we want to harmonize.
     """
 
-    try:
+
+    if type(comment_date) == str:
         if comment_date[:2] == "Il": #si ça n'est pas un début de format datetime (en espérant que tous commencent ainsi)
-            if comment_date[-1] in ["h", "m", "s"]:
+
+            if comment_date[-1] in ["h", "n", "s"]: #n pour "min" mais je n'ai pas testé.
                 return scraping_date #same date as scraping, just today.
 
-            else: 
-                nb_de_jours = comment_date[7] #only one element bcz it should only be less than 10 days otherwise I guess (but haven't verified) that it would display a date.
-                date = scraping_date
-                date.days -= nb_de_jours
-                return date
-    except:
-        pass #if there is an error it *should* mean that it is a datetime (TypeError: 'Timestamp' object is not subscriptable)
+            elif comment_date[-1] == "j": 
+                nb_de_jours = int(comment_date[7]) #only one element bcz it should only be less than 10 days otherwise I guess (but haven't verified) that it would display a date.
+                return (scraping_date - timedelta(days=nb_de_jours) )
+
+            elif comment_date[-3:] == "sem": 
+                nb_de_jours = 7 * int(comment_date[7]) #only one element bcz it should only be less than 10 days otherwise I guess (but haven't verified) that it would display a date.
+                return (scraping_date - timedelta(days=nb_de_jours) )
+
+        else: #it's just the good datetime
+            return datetime.strptime(comment_date, "%d-%m-%Y") #to datetime
+    else:
+        return comment_date #if it's already a datetime.
+        #if there is an error it *should* mean that it is a datetime (TypeError: 'Timestamp' object is not subscriptable)
 
 
 
@@ -96,6 +106,7 @@ def concatAllTikTok(out, out_filename, *data): #concatenate all dataframes conta
 
     if out:
         df0.to_csv("results/" + out_filename)
+        #df0.to_pickle("results/" + out_filename)
 
     return df0
     
@@ -107,8 +118,8 @@ def test_harmonize_dates(df): #check if there is no weird data after.
 
         try:
             if comment_date[:2] == "Il":
-                if comment_date[-1] in ["h", "m", "s"]:
-                    print(comment_date)
+                print(f'Warning ! One comment is remaining with bad date format: {comment_date}')
+
         except:
             pass
 
@@ -117,7 +128,7 @@ def test_codes():
     out_filename=""
 
     d1 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
-    d2 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
+    d2 = read_tiktok_excel("data//tiktok_comments/Comments_1731413583.514067.xlsx")
     d3 = read_tiktok_excel("data/test_tiktok_fusion.xlsx")
 
     test_harmonize_dates(d1)
@@ -126,8 +137,8 @@ def test_codes():
 
     full_concatenation = concatAllTikTok(out, out_filename, d1,d2,d3)
 
-    #display(concatenated_dataset)
-    #display(full_concatenation) #2353 rows
+    ## display(concatenated_dataset)
+    ## display(full_concatenation) #2353 rows
 
 
 
