@@ -8,7 +8,6 @@ def parse_tiktok_comments(filename):
         "Nickname": str,
         "User @": str,
         "Comment Text": str, #pas de date car date_parser s'en occupe déjà
-        "Likes": str, #HAS TO BE CHANGED AFTERWARDS (21.5K cannot be an int but should be converted to integer for robustness).
         'Profile Picture URL': str,
         'Is 2nd Level Comment': str,
         'User Replied To': str,
