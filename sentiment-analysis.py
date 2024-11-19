@@ -46,8 +46,8 @@ def analyze_all_comments(dataset, model, tokenizer): #arg dataset à préciser
 
 def test():
 
-    # MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
-    MODEL = f"Lyreck/finetune-tiktok-brat5" #finetuned model
+    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
+    # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
     model, tokenizer, config = setup_model(MODEL)
 
     text = "kamala is brat"
