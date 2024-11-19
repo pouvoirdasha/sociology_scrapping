@@ -23,6 +23,7 @@ def parse_tiktok_comments(filename):
 
     tiktok = pd.read_csv(filename, dtype = tiktok_dtypes)#, parse_dates=parse_columns, date_parser=date_parser)
     tiktok["Time"] = pd.to_datetime(tiktok["Time"], format = format)
+    tiktok["date_scraped"] = pd.to_datetime(tiktok["date_scraped"], format = format)
 
     return tiktok
 
