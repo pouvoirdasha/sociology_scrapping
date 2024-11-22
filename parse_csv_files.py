@@ -15,9 +15,7 @@ def parse_tiktok_comments(filename):
         'post_url': str,
         'shown_comments': int,
         'scraped_comments': int,
-        'difference': int,
-        'post_likes':int, 
-        'post_shares': int
+        'difference': int
         }
 
     format = "%Y-%m-%d" #avant c'était "%d-%m-%Y" mais mtn que j'ai mis le pré-traitement dans fusion_tiktok_dataset, non
