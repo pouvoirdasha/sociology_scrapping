@@ -27,6 +27,12 @@ def setup_model(MODEL="cardiffnlp/twitter-xlm-roberta-base-sentiment"): #default
 
 
 def analyze_comment(comment, model, tokenizer):
+
+    n = len(comment) #### TRIATER LES COMMENTAIRES TROP LONGS.
+    if len(comment) > 500: #max size for single text comment is 514.
+        expand_comment = [comment[i:i+500] for i in range()
+
+
     comment = preprocess(comment)
     encoded_input = tokenizer(comment, return_tensors='pt')
     output = model(**encoded_input)
