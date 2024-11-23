@@ -5,11 +5,12 @@ import numpy as np
 from scipy.special import softmax
 
 # Preprocess text (username and link placeholders)
-def preprocess(text): ## # TO UPDATE WITH GOO PREPROCESSING (remove only username comments, and treat separately comments that are too long).
+def preprocess(text): ### TO UPDATE WITH GOOD PREPROCESSING (remove only username comments, and treat separately comments that are too long).
     new_text = []
     for t in text.split(" "):
-        t = '@user' if t.startswith('@') and len(t) > 1 else t
-        t = 'http' if t.startswith('http') else t
+        t = '@user' if t.startswith('@') and len(t) > 1 else t #normalize users
+        t = 'http' if t.startswith('http') else t #normalize links
+        #we could also want to treat emojis. idk how the model handles them really (quite impressed it handles them in any way)
         new_text.append(t)
     return " ".join(new_text)
 
@@ -21,6 +22,7 @@ def setup_model(MODEL="cardiffnlp/twitter-xlm-roberta-base-sentiment"): #default
     # PT
     model = AutoModelForSequenceClassification.from_pretrained(MODEL)
     model.save_pretrained(MODEL)
+    tokenizer.save_pretrained(MODEL)
 
     return model, tokenizer, config
 
@@ -29,15 +31,24 @@ def setup_model(MODEL="cardiffnlp/twitter-xlm-roberta-base-sentiment"): #default
 def analyze_comment(comment, model, tokenizer):
 
     n = len(comment) #### TRIATER LES COMMENTAIRES TROP LONGS.
-    if len(comment) > 500: #max size for single text comment is 514.
-        expand_comment = [comment[i:i+500] for i in range()
+    if len(comment) > 500: #max size for single text comment is 514. If comment is too long, we split it in as many pieces in necessary then compute the mean of the sub scores.
+        expand_comment = [comment[500*i:500*(i+1)] for i in range((500 // n) + 1 + 1)]
+        sub_scores=[]
+        for sub_comment in expand_comment: 
+            sub_comment = preprocess(sub_comment)
+            encoded_input = tokenizer(sub_comment, return_tensors='pt')
+            output = model(**encoded_input)
+            scores = output[0][0].detach().numpy()
+            sub_scores.append(softmax(scores))
+        print(f'list of sub scores (to see la gueule du truc): {sub_scores}')
+        scores = np.array( [np.mean([el[i] for el in sub_scores]) for i in range(3)] ) #ugly and inefficient, but working.
 
-
-    comment = preprocess(comment)
-    encoded_input = tokenizer(comment, return_tensors='pt')
-    output = model(**encoded_input)
-    scores = output[0][0].detach().numpy()
-    scores = softmax(scores)
+    else:
+        comment = preprocess(comment)
+        encoded_input = tokenizer(comment, return_tensors='pt')
+        output = model(**encoded_input)
+        scores = output[0][0].detach().numpy()
+        scores = softmax(scores)
 
     return scores
 
@@ -52,11 +63,21 @@ def analyze_all_comments(dataset, model, tokenizer): #arg dataset à préciser
 
 def test():
 
-    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment"
-    # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
-    model, tokenizer, config = setup_model(MODEL)
+    try: #if first time loading the model
+        MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
+        # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
+        model, tokenizer, config = setup_model(MODEL)
+    except:
+        import os
+        #os.chdir("../")
+        #print(os.listdir())
+        MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"#/twitter-xlm-roberta-base-sentiment" #change path to local path
+        # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
+        model, tokenizer, config = setup_model(MODEL)
 
-    text = "kamala is brat"
+    #text = "kamala is brat"
+    text = "i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love youi love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you"
+    text = "I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you  I love you"
 
     scores_dict = analyze_all_comments([text], model, tokenizer)
 
