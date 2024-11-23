@@ -7,6 +7,7 @@ from IPython.display import display
 from youtube_comments_scraping import scrape_youtube_videos
 from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
 from sentiment_analysis import analyze_comment, setup_model
+from tools import progress_bar
 
 
 def main():
@@ -82,6 +83,8 @@ def main():
         for i, (text, url, id) in tiktok_comments.iterrows():
             scores = analyze_comment(text, model, tokenizer)
             scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
+
+        print(scores_dict)
 
         ## add columns do data frames.
 
