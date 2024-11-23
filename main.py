@@ -1,6 +1,8 @@
 import datetime
-date = datetime.datetime.now() #to name files with name
+date = datetime.datetime.now() #to name files with date
 import os
+import pandas as pd
+from IPython.display import display
 
 from youtube_comments_scraping import scrape_youtube_videos
 
@@ -8,8 +10,10 @@ from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
 
 
 def main():
+    #choose which code segments you want to execute.
     youtube=False
-    tiktok=True
+    tiktok=False
+    sentiment_analysis=True
 
     ##############################################################################################################################################################################
     ########################################################################## YOUTUBE COMMENT SCRAPING ##########################################################################
@@ -60,6 +64,17 @@ def main():
 
     # il faut que les commentaires soient donnés et analysés dans un ordre spécifique, afin que l'on puisse rajouter la colonne aux datasets et ainsi analyser les données
     # dans leur ensemble.
+
+    if sentiment_analysis:
+        ## get data
+        tiktok_file = "./results/TikTok-comments_18-11-2024_12h46.csv"
+        tiktok_comments = pd.read_csv(tiktok_file)
+        tiktok_comments = tiktok_comments[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
+        display(tiktok_comments)
+
+        ## analyze data
+
+        ## add columns do data frames.
 
 
 
