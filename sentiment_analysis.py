@@ -2,7 +2,9 @@ from transformers import AutoModelForSequenceClassification
 from transformers import TFAutoModelForSequenceClassification
 from transformers import AutoTokenizer, AutoConfig
 import numpy as np
+import pandas as pd
 from scipy.special import softmax
+from tools import progress
 
 # Preprocess text (username and link placeholders)
 def preprocess(text): ### TO UPDATE WITH GOOD PREPROCESSING (remove only username comments, and treat separately comments that are too long).
@@ -52,7 +54,7 @@ def analyze_comment(comment, model, tokenizer):
 
     return scores
 
-def analyze_all_comments(dataset, model, tokenizer): #arg dataset à préciser
+def analyze_all_comments(dataset, model, tokenizer): #this function is not used outside of the example. The thing is that the datset changes form between tiktok, youtube and reddit...
     scores_dict = {}
     for comment in dataset:
         scores = analyze_comment(comment, model, tokenizer)
@@ -60,6 +62,39 @@ def analyze_all_comments(dataset, model, tokenizer): #arg dataset à préciser
 
     return scores_dict
 
+def analyze_tiktok_comments(dataset, model, tokenizer, config):
+
+    urls, ids, positives, neutrals, negatives = [], [], [], [], []
+    n=dataset.shape[0] #nb of lines
+    for i, (text, url, id) in dataset.iterrows():
+        scores_dict = {}
+
+        scores = analyze_comment(text, model, tokenizer)
+        #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
+
+        #rank scores - separate function for this ?
+        import numpy as np
+        ranking = np.argsort(scores)
+        ranking = ranking[::-1]
+        for j in range(scores.shape[0]):
+            l = config.id2label[ranking[j]]
+            s = scores[ranking[j]]
+
+            scores_dict[l] = np.round(float(s), 2)
+
+        urls.append(url)
+        ids.append(id)
+        positives.append(scores_dict["positive"])
+        neutrals.append(scores_dict["neutral"])
+        negatives.append(scores_dict["negative"])
+        #
+
+        progress(int( ((i+1)/n)*100) )
+
+    d = {'post_url':urls, 'Comment Number (ID)':ids, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    scores_df = pd.DataFrame(data = d)
+
+    return scores_df
 
 def test():
 

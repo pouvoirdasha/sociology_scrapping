@@ -6,8 +6,8 @@ from IPython.display import display
 
 from youtube_comments_scraping import scrape_youtube_videos
 from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
-from sentiment_analysis import analyze_comment, setup_model
-from tools import progress_bar
+from sentiment_analysis import setup_model, analyze_tiktok_comments
+from tools import progress
 
 
 def main():
@@ -72,21 +72,29 @@ def main():
         MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
         model, tokenizer, config = setup_model(MODEL)
 
+        print('--------------------------')
+        print('launching analysis of tiktok comments')
         ## get data
         tiktok_file = "./results/TikTok-comments_18-11-2024_12h46.csv"
-        tiktok_comments = pd.read_csv(tiktok_file)
-        tiktok_comments = tiktok_comments[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
+        tiktok_df = pd.read_csv(tiktok_file)
+        tiktok_comments = tiktok_df[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
             
 
         ## analyze data
-        scores_dict = {} #analyzing one by one seems more natural here (even if I made a general analyze_all_comments function !!)
-        for i, (text, url, id) in tiktok_comments.iterrows():
-            scores = analyze_comment(text, model, tokenizer)
-            scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
 
-        print(scores_dict)
+        scores_df = analyze_tiktok_comments(tiktok_comments, model, tokenizer, config)
+        print("\n")
 
-        ## add columns do data frames.
+        ## add columns do data frames. (big merge !)
+
+        tiktok_with_sentiments = pd.merge(tiktok_df, scores_df, how = 'left', on=['post_url','Comment Number (ID)'])
+        out_filename= f"TikTok-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
+
+        out=True
+        if out:
+            tiktok_with_sentiments.to_csv("results/" + out_filename)
+            print(f'Saved sentiment analysed tiktok comments to "results/{out_filename}".')
+
 
 
 
