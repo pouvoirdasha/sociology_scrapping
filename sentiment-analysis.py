@@ -30,7 +30,7 @@ def setup_model(MODEL="cardiffnlp/twitter-xlm-roberta-base-sentiment"): #default
 
 def analyze_comment(comment, model, tokenizer):
 
-    n = len(comment) #### TRIATER LES COMMENTAIRES TROP LONGS.
+    n = len(comment)
     if len(comment) > 500: #max size for single text comment is 514. If comment is too long, we split it in as many pieces in necessary then compute the mean of the sub scores.
         expand_comment = [comment[500*i:500*(i+1)] for i in range((500 // n) + 1 + 1)]
         sub_scores=[]
@@ -43,7 +43,7 @@ def analyze_comment(comment, model, tokenizer):
         print(f'list of sub scores (to see la gueule du truc): {sub_scores}')
         scores = np.array( [np.mean([el[i] for el in sub_scores]) for i in range(3)] ) #ugly and inefficient, but working.
 
-    else:
+    else: #regular processing if length is ok.
         comment = preprocess(comment)
         encoded_input = tokenizer(comment, return_tensors='pt')
         output = model(**encoded_input)
