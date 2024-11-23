@@ -63,14 +63,9 @@ def analyze_all_comments(dataset, model, tokenizer): #arg dataset à préciser
 
 def test():
 
-    try: #if first time loading the model
-        MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"
-        # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
-        model, tokenizer, config = setup_model(MODEL)
-    except:
-        MODEL = f"cardiffnlp/twitter-roberta-base-sentiment-latest"#/twitter-xlm-roberta-base-sentiment" #change path to local path
-        # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
-        model, tokenizer, config = setup_model(MODEL)
+    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
+    # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
+    model, tokenizer, config = setup_model(MODEL)
 
     #text = "kamala is brat"
     text = "i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love youi love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you"

@@ -5,8 +5,8 @@ import pandas as pd
 from IPython.display import display
 
 from youtube_comments_scraping import scrape_youtube_videos
-
 from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
+from sentiment_analysis import analyze_comment, setup_model
 
 
 def main():
@@ -66,15 +66,25 @@ def main():
     # dans leur ensemble.
 
     if sentiment_analysis:
+
+        ## initialize model
+        MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
+        model, tokenizer, config = setup_model(MODEL)
+
         ## get data
         tiktok_file = "./results/TikTok-comments_18-11-2024_12h46.csv"
         tiktok_comments = pd.read_csv(tiktok_file)
         tiktok_comments = tiktok_comments[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
-        display(tiktok_comments)
+            
 
         ## analyze data
+        scores_dict = {} #analyzing one by one seems more natural here (even if I made a general analyze_all_comments function !!)
+        for i, (text, url, id) in tiktok_comments.iterrows():
+            scores = analyze_comment(text, model, tokenizer)
+            scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
 
         ## add columns do data frames.
+
 
 
 
