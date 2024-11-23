@@ -6,7 +6,7 @@ from IPython.display import display
 
 from youtube_comments_scraping import scrape_youtube_videos
 from fusion_tiktok_datasets import read_tiktok_excel, concatAllTikTok
-from sentiment_analysis import setup_model, analyze_tiktok_comments
+from sentiment_analysis import setup_model, analyze_tiktok_comments, analyze_youtube_comments, analyze_reddit_comments
 from tools import progress
 
 
@@ -14,7 +14,9 @@ def main():
     #choose which code segments you want to execute.
     youtube=False
     tiktok=False
-    sentiment_analysis=True
+    tiktok_sentiment_analysis=False
+    youtube_sentiment_analysis=False
+    reddit_sentiment_analysis=True
 
     ##############################################################################################################################################################################
     ########################################################################## YOUTUBE COMMENT SCRAPING ##########################################################################
@@ -66,35 +68,83 @@ def main():
     # il faut que les commentaires soient donnés et analysés dans un ordre spécifique, afin que l'on puisse rajouter la colonne aux datasets et ainsi analyser les données
     # dans leur ensemble.
 
-    if sentiment_analysis:
+    ## initialize model
+    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
+    model, tokenizer, config = setup_model(MODEL)
 
-        ## initialize model
-        MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
-        model, tokenizer, config = setup_model(MODEL)
+    if tiktok_sentiment_analysis:
 
-        print('--------------------------')
-        print('launching analysis of tiktok comments')
+        print('--------------------------------------')
+        print('Launching analysis of TikTok comments')
         ## get data
         tiktok_file = "./results/TikTok-comments_18-11-2024_12h46.csv"
         tiktok_df = pd.read_csv(tiktok_file)
         tiktok_comments = tiktok_df[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
-            
 
         ## analyze data
-
         scores_df = analyze_tiktok_comments(tiktok_comments, model, tokenizer, config)
         print("\n")
 
         ## add columns do data frames. (big merge !)
-
-        tiktok_with_sentiments = pd.merge(tiktok_df, scores_df, how = 'left', on=['post_url','Comment Number (ID)'])
+        tiktok_with_sentiments = pd.merge(tiktok_df, scores_df, how = 'inner', on=['post_url','Comment Number (ID)'])
         out_filename= f"TikTok-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
 
+        ## export to file
         out=True
         if out:
             tiktok_with_sentiments.to_csv("results/" + out_filename)
-            print(f'Saved sentiment analysed tiktok comments to "results/{out_filename}".')
+            print(f'Saved sentiment analysed TikTok comments to "results/{out_filename}".')
 
+
+    if youtube_sentiment_analysis:
+
+        print('---------------------------------------')
+        print('Launching analysis of YouTube comments')
+
+        ## get data
+        youtube_file = "./results/youtube_comments.csv"
+        youtube_df = pd.read_csv(youtube_file)
+        youtube_comments = youtube_df[["Comment", "VideoID", "Username", "Timestamp"]] #unique key to identify a comment: (VideoID, Username, Timestamp).
+
+        ## analyze data
+        scores_df = analyze_youtube_comments(youtube_comments, model, tokenizer, config)
+        print('\n')
+
+        ## add columns do data frames. (big merge !)
+        youtube_with_sentiments = pd.merge(youtube_df, scores_df, how = 'inner', on=["VideoID", "Username", "Timestamp"])
+        out_filename= f"YouTube-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
+
+        ## export to file
+        out=True
+        if out:
+            youtube_with_sentiments.to_csv("results/" + out_filename)
+            print(f'Saved sentiment analysed YouTube comments to "results/{out_filename}".')
+
+    if reddit_sentiment_analysis:
+
+        print('---------------------------------------')
+        print('Launching analysis of Reddit comments')
+
+        #### Il FAUT ECRIRE UN TRAITEMENT POUR REDDIT......... Là avec le format qu'on a pour l'instant c pas top. Pour l'instant j'ai un truc fait à la main, SANS URL.
+
+        ## get data
+        reddit_file = "./data/reddit.csv"
+        reddit_df = pd.read_csv(reddit_file)
+        reddit_comments = reddit_df[["comment_content"]] #unique key to identify a comment: just the text (I was reluctant to do this but the dataset lacks a unique key).
+
+        ## analyze data
+        scores_df = analyze_reddit_comments(reddit_comments, model, tokenizer, config)
+        print('\n')
+
+        ## add columns do data frames. (big merge !)
+        reddit_with_sentiments = pd.merge(reddit_df, scores_df, how = 'inner', on=["comment_content"])
+        out_filename= f"Reddit-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
+
+        ## export to file
+        out=True
+        if out:
+            reddit_with_sentiments.to_csv("results/" + out_filename)
+            print(f'Saved sentiment analysed Reddit comments to "results/{out_filename}".')
 
 
 

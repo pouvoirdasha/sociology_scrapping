@@ -67,7 +67,7 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
     urls, ids, positives, neutrals, negatives = [], [], [], [], []
     n=dataset.shape[0] #nb of lines
     for i, (text, url, id) in dataset.iterrows():
-        scores_dict = {}
+        scores_dict = {} #will contain score for positive, neutral and negative.
 
         scores = analyze_comment(text, model, tokenizer)
         #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
@@ -95,6 +95,79 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
     scores_df = pd.DataFrame(data = d)
 
     return scores_df
+
+def analyze_youtube_comments(dataset, model, tokenizer, config):
+    VideoIDs, Usernames, Timestamps, positives, neutrals, negatives = [], [], [], [], [], []
+    n=dataset.shape[0] #nb of lines
+    for i, (text, VideoID, Username, Timestamp) in dataset.iterrows():
+        scores_dict = {} #will contain score for positive, neutral and negative.
+
+        scores = analyze_comment(text, model, tokenizer)
+        #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
+
+        #rank scores - separate function for this ?
+        import numpy as np
+        ranking = np.argsort(scores)
+        ranking = ranking[::-1]
+        for j in range(scores.shape[0]):
+            l = config.id2label[ranking[j]]
+            s = scores[ranking[j]]
+
+            scores_dict[l] = np.round(float(s), 2)
+
+        VideoIDs.append(VideoID)
+        Usernames.append(Username)
+        Timestamps.append(Timestamp)
+        positives.append(scores_dict["positive"])
+        neutrals.append(scores_dict["neutral"])
+        negatives.append(scores_dict["negative"])
+        #
+
+        progress(int( ((i+1)/n)*100) )
+
+        if i > 10:
+            break
+
+    d = {'VideoID':VideoIDs, 'Username':Usernames, 'Timestamp':Timestamps, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    scores_df = pd.DataFrame(data = d)
+
+    return scores_df
+
+def analyze_reddit_comments(dataset, model, tokenizer, config):
+    comments, positives, neutrals, negatives = [], [], [], []
+    n=dataset.shape[0] #nb of lines
+    for i, text in dataset.iterrows():
+        scores_dict = {} #will contain score for positive, neutral and negative.
+
+        scores = analyze_comment(text, model, tokenizer)
+        #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
+
+        #rank scores - separate function for this ?
+        import numpy as np
+        ranking = np.argsort(scores)
+        ranking = ranking[::-1]
+        for j in range(scores.shape[0]):
+            l = config.id2label[ranking[j]]
+            s = scores[ranking[j]]
+
+            scores_dict[l] = np.round(float(s), 2)
+
+        comments.append(text)
+        positives.append(scores_dict["positive"])
+        neutrals.append(scores_dict["neutral"])
+        negatives.append(scores_dict["negative"])
+        #
+
+        progress(int( ((i+1)/n)*100) )
+
+        if i > 10:
+            break
+
+    d = {'comment_content':comments, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    scores_df = pd.DataFrame(data = d)
+
+    return scores_df
+
 
 def test():
 
