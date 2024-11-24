@@ -72,7 +72,6 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
         #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
 
         #rank scores - separate function for this ?
-        import numpy as np
         ranking = np.argsort(scores)
         ranking = ranking[::-1]
         for j in range(scores.shape[0]):
@@ -83,11 +82,11 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
         urls.append(url)
         ids.append(id)
-        try:
+        try: #if original model
             positives.append(scores_dict["positive"])
             neutrals.append(scores_dict["neutral"])
             negatives.append(scores_dict["negative"])
-        except:
+        except: #if finetuned model
             positives.append(scores_dict['2'])
             neutrals.append(scores_dict['1'])
             negatives.append(scores_dict['0'])
@@ -110,7 +109,6 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
         #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
 
         #rank scores - separate function for this ?
-        import numpy as np
         ranking = np.argsort(scores)
         ranking = ranking[::-1]
         for j in range(scores.shape[0]):
@@ -150,7 +148,6 @@ def analyze_reddit_comments(dataset, model, tokenizer, config):
         #scores_dict[(url,id)] = scores #(url,id) is a unique identifier for each comment. Will be necessary for the final join.
 
         #rank scores - separate function for this ?
-        import numpy as np
         ranking = np.argsort(scores)
         ranking = ranking[::-1]
         for j in range(scores.shape[0]):
