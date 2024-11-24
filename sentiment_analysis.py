@@ -63,9 +63,9 @@ def analyze_all_comments(dataset, model, tokenizer): #this function is not used 
 
 def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
-    urls, ids, positives, neutrals, negatives = [], [], [], [], []
+    keys, positives, neutrals, negatives = [], [], [], []
     n=dataset.shape[0] #nb of lines
-    for i, (text, url, id) in dataset.iterrows():
+    for i, (text, key) in dataset.iterrows():
         scores_dict = {} #will contain score for positive, neutral and negative.
 
         scores = analyze_comment(text, model, tokenizer)
@@ -80,8 +80,7 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
             scores_dict[l] = np.round(float(s), 2)
 
-        urls.append(url)
-        ids.append(id)
+        keys.append(key)
         try: #if original model
             positives.append(scores_dict["positive"])
             neutrals.append(scores_dict["neutral"])
@@ -94,15 +93,15 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
         progress(int( ((i+1)/n)*100) )
 
-    d = {'post_url':urls, 'Comment Number (ID)':ids, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    d = {'join_key':keys, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
 
     return scores_df
 
 def analyze_youtube_comments(dataset, model, tokenizer, config):
-    VideoIDs, Usernames, Timestamps, positives, neutrals, negatives = [], [], [], [], [], []
+    keys, positives, neutrals, negatives = [], [], [], []
     n=dataset.shape[0] #nb of lines
-    for i, (text, VideoID, Username, Timestamp) in dataset.iterrows():
+    for i, (text, key) in dataset.iterrows():
         scores_dict = {} #will contain score for positive, neutral and negative.
 
         scores = analyze_comment(text, model, tokenizer)
@@ -117,9 +116,7 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
 
             scores_dict[l] = np.round(float(s), 2)
 
-        VideoIDs.append(VideoID)
-        Usernames.append(Username)
-        Timestamps.append(Timestamp)
+        keys.append(key)
         try:
             positives.append(scores_dict["positive"])
             neutrals.append(scores_dict["neutral"])
@@ -132,8 +129,10 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
         #
 
         progress(int( ((i+1)/n)*100) )
+        if i>10:
+            break
 
-    d = {'VideoID':VideoIDs, 'Username':Usernames, 'Timestamp':Timestamps, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    d = {'join_key':keys, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
 
     return scores_df
@@ -217,10 +216,4 @@ def test():
 
 # text = "Good night 😊"
 # encoded_input = tokenizer(text, return_tensors='tf')
-# output = model(encoded_input)
-# scores = output[0][0].numpy()
-# scores = softmax(scores)
-
-
-if __name__ == "__main__":
-    test()
+# output =

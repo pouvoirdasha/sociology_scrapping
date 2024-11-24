@@ -14,9 +14,9 @@ def main():
     #choose which code segments you want to execute.
     youtube=False
     tiktok=False
-    tiktok_sentiment_analysis=False
-    youtube_sentiment_analysis=True
-    reddit_sentiment_analysis=False
+    tiktok_sentiment_analysis=True
+    youtube_sentiment_analysis=False
+    reddit_sentiment_analysis=True
 
     ##############################################################################################################################################################################
     ########################################################################## YOUTUBE COMMENT SCRAPING ##########################################################################
@@ -69,8 +69,8 @@ def main():
     # dans leur ensemble.
 
     ## initialize model
-    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
-    MODEL = f"Lyreck/finetune-tiktok-brat7"
+    # MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual" #original model
+    MODEL = f"Lyreck/finetune-tiktok-brat7" #finetuned model
     model, tokenizer, config = setup_model(MODEL)
 
     if tiktok_sentiment_analysis:
@@ -80,14 +80,15 @@ def main():
         ## get data
         tiktok_file = "./results/TikTok-comments_18-11-2024_12h46.csv"
         tiktok_df = pd.read_csv(tiktok_file)
-        tiktok_comments = tiktok_df[["Comment Text", "post_url", "Comment Number (ID)"]] #key = (post_url, Comment Number (ID)).
+        tiktok_df["join_key"] = [i for i in range(tiktok_df.shape[0])]
+        tiktok_comments = tiktok_df[["Comment Text", "join_key"]] #key = join_key.
 
         ## analyze data
         scores_df = analyze_tiktok_comments(tiktok_comments, model, tokenizer, config)
         print("\n")
 
         ## add columns do data frames. (big merge !)
-        tiktok_with_sentiments = pd.merge(tiktok_df, scores_df, how = 'inner', on=['post_url','Comment Number (ID)'])
+        tiktok_with_sentiments = pd.merge(tiktok_df, scores_df, how = 'inner', on='join_key')
         out_filename= f"TikTok-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
 
         ## export to file
@@ -105,14 +106,15 @@ def main():
         ## get data
         youtube_file = "./results/youtube_comments.csv"
         youtube_df = pd.read_csv(youtube_file)
-        youtube_comments = youtube_df[["Comment", "VideoID", "Username", "Timestamp"]] #unique key to identify a comment: (VideoID, Username, Timestamp).
+        youtube_df["join_key"] = [i for i in range(youtube_df.shape[0])]
+        youtube_comments = youtube_df[["Comment", "join_key"]] #unique key to identify a comment: (VideoID, Username, Timestamp).
 
         ## analyze data
         scores_df = analyze_youtube_comments(youtube_comments, model, tokenizer, config)
         print('\n')
 
         ## add columns do data frames. (big merge !)
-        youtube_with_sentiments = pd.merge(youtube_df, scores_df, how = 'inner', on=["VideoID", "Username", "Timestamp"])
+        youtube_with_sentiments = pd.merge(youtube_df, scores_df, how = 'inner', on="join_key")
         out_filename= f"YouTube-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
 
         ## export to file
