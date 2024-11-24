@@ -32,8 +32,13 @@ def setup_model(MODEL="cardiffnlp/twitter-xlm-roberta-base-sentiment"): #default
 
 def analyze_comment(comment, model, tokenizer):
 
-    n = len(comment)
-    if len(comment) > 500: #max size for single text comment is 514. If comment is too long, we split it in as many pieces in necessary then compute the mean of the sub scores.
+    try:
+        n = len(comment)
+    except:
+        print("\n")
+        print(comment)
+        print(type(comment))
+    if n > 500: #max size for single text comment is 514. If comment is too long, we split it in as many pieces in necessary then compute the mean of the sub scores.
         expand_comment = [comment[500*i:500*(i+1)] for i in range((500 // n) + 1 + 1)]
         sub_scores=[]
         for sub_comment in expand_comment: 
@@ -129,8 +134,7 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
         #
 
         progress(int( ((i+1)/n)*100) )
-        if i>10:
-            break
+
 
     d = {'join_key':keys, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
@@ -216,4 +220,10 @@ def test():
 
 # text = "Good night 😊"
 # encoded_input = tokenizer(text, return_tensors='tf')
-# output =
+# output = model(encoded_input)
+# scores = output[0][0].numpy()
+# scores = softmax(scores)
+
+
+if __name__ == "__main__":
+    test()

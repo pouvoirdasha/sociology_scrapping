@@ -14,9 +14,9 @@ def main():
     #choose which code segments you want to execute.
     youtube=False
     tiktok=False
-    tiktok_sentiment_analysis=True
-    youtube_sentiment_analysis=False
-    reddit_sentiment_analysis=True
+    tiktok_sentiment_analysis=False
+    youtube_sentiment_analysis=True
+    reddit_sentiment_analysis=False
 
     ##############################################################################################################################################################################
     ########################################################################## YOUTUBE COMMENT SCRAPING ##########################################################################
@@ -106,6 +106,7 @@ def main():
         ## get data
         youtube_file = "./results/youtube_comments.csv"
         youtube_df = pd.read_csv(youtube_file)
+        youtube_df.dropna(axis='index', subset="Comment", inplace=True) #ça devrait être dans le prétratiement mais je mets un pansement ici car apparemment il reste du nan...
         youtube_df["join_key"] = [i for i in range(youtube_df.shape[0])]
         youtube_comments = youtube_df[["Comment", "join_key"]] #unique key to identify a comment: (VideoID, Username, Timestamp).
 
