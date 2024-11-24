@@ -211,19 +211,4 @@ def test():
 #     s = scores[ranking[i]]
 #     print(f"{i+1}) {l} {np.round(float(s), 4)}")
 ######### à voir en fonction de la gueuel eque prned notre dataset de commentaires. Probablement devoir rajouter 
-# des infos sur chaque commentaire pour avoir un identifiant unique?
-
-
-# # TF
-# model = TFAutoModelForSequenceClassification.from_pretrained(MODEL)
-# model.save_pretrained(MODEL)
-
-# text = "Good night 😊"
-# encoded_input = tokenizer(text, return_tensors='tf')
-# output = model(encoded_input)
-# scores = output[0][0].numpy()
-# scores = softmax(scores)
-
-
-if __name__ == "__main__":
-    test()
+# des infos s
