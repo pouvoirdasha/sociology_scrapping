@@ -15,8 +15,8 @@ def main():
     youtube=False
     tiktok=False
     tiktok_sentiment_analysis=False
-    youtube_sentiment_analysis=False
-    reddit_sentiment_analysis=True
+    youtube_sentiment_analysis=True
+    reddit_sentiment_analysis=False
 
     ##############################################################################################################################################################################
     ########################################################################## YOUTUBE COMMENT SCRAPING ##########################################################################
@@ -70,6 +70,7 @@ def main():
 
     ## initialize model
     MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
+    MODEL = f"Lyreck/finetune-tiktok-brat7"
     model, tokenizer, config = setup_model(MODEL)
 
     if tiktok_sentiment_analysis:
@@ -130,14 +131,15 @@ def main():
         ## get data
         reddit_file = "./data/reddit.csv"
         reddit_df = pd.read_csv(reddit_file)
-        reddit_comments = reddit_df[["comment_content"]] #unique key to identify a comment: just the text (I was reluctant to do this but the dataset lacks a unique key).
+        reddit_df["join_key"] = [i for i in range(reddit_df.shape[0])]
+        reddit_comments = reddit_df[["comment_content", "join_key"]] #unique key to identify a comment: just the text (I was reluctant to do this but the dataset lacks a unique key).
 
         ## analyze data
         scores_df = analyze_reddit_comments(reddit_comments, model, tokenizer, config)
         print('\n')
 
         ## add columns do data frames. (big merge !)
-        reddit_with_sentiments = pd.merge(reddit_df, scores_df, how = 'inner', on=["comment_content"])
+        reddit_with_sentiments = pd.merge(reddit_df, scores_df, how = 'inner', on=["join_key"])
         out_filename= f"Reddit-with-sentiments_{date.day}-{date.month}-{date.year}_{date.hour}h{date.minute}.csv"
 
         ## export to file

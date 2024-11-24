@@ -42,7 +42,6 @@ def analyze_comment(comment, model, tokenizer):
             output = model(**encoded_input)
             scores = output[0][0].detach().numpy()
             sub_scores.append(softmax(scores))
-        print(f'list of sub scores (to see la gueule du truc): {sub_scores}')
         scores = np.array( [np.mean([el[i] for el in sub_scores]) for i in range(3)] ) #ugly and inefficient, but working.
 
     else: #regular processing if length is ok.
@@ -84,9 +83,14 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
         urls.append(url)
         ids.append(id)
-        positives.append(scores_dict["positive"])
-        neutrals.append(scores_dict["neutral"])
-        negatives.append(scores_dict["negative"])
+        try:
+            positives.append(scores_dict["positive"])
+            neutrals.append(scores_dict["neutral"])
+            negatives.append(scores_dict["negative"])
+        except:
+            positives.append(scores_dict['2'])
+            neutrals.append(scores_dict['1'])
+            negatives.append(scores_dict['0'])
         #
 
         progress(int( ((i+1)/n)*100) )
@@ -118,15 +122,18 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
         VideoIDs.append(VideoID)
         Usernames.append(Username)
         Timestamps.append(Timestamp)
-        positives.append(scores_dict["positive"])
-        neutrals.append(scores_dict["neutral"])
-        negatives.append(scores_dict["negative"])
+        try:
+            positives.append(scores_dict["positive"])
+            neutrals.append(scores_dict["neutral"])
+            negatives.append(scores_dict["negative"])
+        except:
+            positives.append(scores_dict['2'])
+            neutrals.append(scores_dict['1'])
+            negatives.append(scores_dict['0'])
+
         #
 
         progress(int( ((i+1)/n)*100) )
-
-        if i > 10:
-            break
 
     d = {'VideoID':VideoIDs, 'Username':Usernames, 'Timestamp':Timestamps, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
@@ -134,9 +141,9 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
     return scores_df
 
 def analyze_reddit_comments(dataset, model, tokenizer, config):
-    comments, positives, neutrals, negatives = [], [], [], []
+    keys, positives, neutrals, negatives = [], [], [], []
     n=dataset.shape[0] #nb of lines
-    for i, text in dataset.iterrows():
+    for i, (text,join_key) in dataset.iterrows():
         scores_dict = {} #will contain score for positive, neutral and negative.
 
         scores = analyze_comment(text, model, tokenizer)
@@ -152,18 +159,21 @@ def analyze_reddit_comments(dataset, model, tokenizer, config):
 
             scores_dict[l] = np.round(float(s), 2)
 
-        comments.append(text)
-        positives.append(scores_dict["positive"])
-        neutrals.append(scores_dict["neutral"])
-        negatives.append(scores_dict["negative"])
+        keys.append(join_key)
+        try:
+            positives.append(scores_dict["positive"])
+            neutrals.append(scores_dict["neutral"])
+            negatives.append(scores_dict["negative"])
+        except:
+            positives.append(scores_dict['2'])
+            neutrals.append(scores_dict['1'])
+            negatives.append(scores_dict['0'])
         #
 
         progress(int( ((i+1)/n)*100) )
 
-        if i > 10:
-            break
 
-    d = {'comment_content':comments, 'positive':positives,'neutral':neutrals, 'negative':negatives}
+    d = {'join_key':keys, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
 
     return scores_df
