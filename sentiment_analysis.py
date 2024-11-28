@@ -58,6 +58,7 @@ def analyze_comment(comment, model, tokenizer):
 
     return scores
 
+
 def analyze_all_comments(dataset, model, tokenizer): #this function is not used outside of the example. The thing is that the datset changes form between tiktok, youtube and reddit...
     scores_dict = {}
     for comment in dataset:
@@ -65,6 +66,7 @@ def analyze_all_comments(dataset, model, tokenizer): #this function is not used 
         scores_dict[comment] = scores
 
     return scores_dict
+
 
 def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
@@ -103,6 +105,7 @@ def analyze_tiktok_comments(dataset, model, tokenizer, config):
 
     return scores_df
 
+
 def analyze_youtube_comments(dataset, model, tokenizer, config):
     keys, positives, neutrals, negatives = [], [], [], []
     n=dataset.shape[0] #nb of lines
@@ -135,11 +138,11 @@ def analyze_youtube_comments(dataset, model, tokenizer, config):
 
         progress(int( ((i+1)/n)*100) )
 
-
     d = {'join_key':keys, 'positive':positives,'neutral':neutrals, 'negative':negatives}
     scores_df = pd.DataFrame(data = d)
 
     return scores_df
+
 
 def analyze_reddit_comments(dataset, model, tokenizer, config):
     keys, positives, neutrals, negatives = [], [], [], []
@@ -201,29 +204,6 @@ def test():
             s = scores[ranking[i]]
             print(f"{i+1}) {l} {np.round(float(s), 4)}")
 
-
-
-########## Pour gérer l'affichage des scores ##########@
-# Print labels and scores
-# ranking = np.argsort(scores)
-# ranking = ranking[::-1]
-# for i in range(scores.shape[0]):
-#     l = config.id2label[ranking[i]]
-#     s = scores[ranking[i]]
-#     print(f"{i+1}) {l} {np.round(float(s), 4)}")
-######### à voir en fonction de la gueuel eque prned notre dataset de commentaires. Probablement devoir rajouter 
-# des infos sur chaque commentaire pour avoir un identifiant unique?
-
-
-# # TF
-# model = TFAutoModelForSequenceClassification.from_pretrained(MODEL)
-# model.save_pretrained(MODEL)
-
-# text = "Good night 😊"
-# encoded_input = tokenizer(text, return_tensors='tf')
-# output = model(encoded_input)
-# scores = output[0][0].numpy()
-# scores = softmax(scores)
 
 
 if __name__ == "__main__":
