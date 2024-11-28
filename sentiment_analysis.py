@@ -181,12 +181,13 @@ def analyze_reddit_comments(dataset, model, tokenizer, config):
 
 def test():
 
-    MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
-    # MODEL = f"Lyreck/finetune-tiktok-brat6" #finetuned model 
+    # MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
+    MODEL = f"Lyreck/finetune-tiktok-brat7" #finetuned model 
     model, tokenizer, config = setup_model(MODEL)
 
     #text = "kamala is brat"
     text = "i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love youi love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you"
+    #"]
 
     scores_dict = analyze_all_comments([text], model, tokenizer)
 
