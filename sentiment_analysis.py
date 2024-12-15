@@ -186,10 +186,10 @@ def test():
 
     # MODEL = f"cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual"
     # MODEL = f"Lyreck/finetune-tiktok-brat7" #finetuned model with small dataset
-    MODEL = f"Lyreck/brat-summer-1" #finetuned model with slightly larger dataset
+    MODEL = f"Lyreck/brat-summer_256comms" #finetuned model with slightly larger dataset
     model, tokenizer, config = setup_model(MODEL)
 
-    text = "kamala is brat"
+    text = "she ate this"
     #text = "i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love youi love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you i love you"
     #"]
 
