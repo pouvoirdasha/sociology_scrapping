@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?> 
+ <!-- Created by SocNetV 3.1 -->
+<graphml xmlns="http://graphml.graphdrawing.org/xmlns"       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance "       xsi:schemaLocation="http://graphml.graphdrawing.org/xmlns       http://graphml.graphdrawing.org/xmlns/1.0/graphml.xsd">
+  <key id="d0" for="node" attr.name="label" attr.type="string"> 
+    <default></default> 
+  </key> 
+  <key id="d1" for="node" attr.name="x_coordinate" attr.type="double"> 
+    <default>0.0</default> 
+  </key> 
+  <key id="d2" for="node" attr.name="y_coordinate" attr.type="double"> 
+    <default>0.0</default> 
+  </key> 
+  <key id="d3" for="node" attr.name="size" attr.type="double"> 
+    <default>10</default> 
+  </key> 
+  <key id="d4" for="node" attr.name="color" attr.type="string"> 
+    <default>#333f98</default> 
+  </key> 
+  <key id="d5" for="node" attr.name="shape" attr.type="string"> 
+    <default>ellipse</default> 
+  </key> 
+  <key id="d51" for="node" attr.name="custom-icon" attr.type="string"> 
+    <default>youtube_videos_relations_graphml_images/ellipse.png</default> 
+  </key> 
+  <key id="d6" for="node" attr.name="label.color" attr.type="string"> 
+    <default>#8d8d8d</default> 
+  </key> 
+  <key id="d7" for="node" attr.name="label.size" attr.type="string"> 
+    <default>8</default> 
+  </key> 
+  <key id="d8" for="edge" attr.name="weight" attr.type="double"> 
+    <default>1.0</default> 
+  </key> 
+  <key id="d9" for="edge" attr.name="color" attr.type="string"> 
+    <default>#830e0e</default> 
+  </key> 
+  <key id="d10" for="edge" attr.name="label" attr.type="string"> 
+    <default></default> 
+  </key> 
+  <graph id="youtube_viceos_relations.gml" edgedefault="undirected"> 
+    <node id="0"> 
+      <data key="d0">Js4qqwdjA9M</data>
+      <data key="d1">0.313694</data>
+      <data key="d2">0.567781</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="1"> 
+      <data key="d0">8zPor9l9SwI</data>
+      <data key="d1">0.569268</data>
+      <data key="d2">0.0255363</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="2"> 
+      <data key="d0">YF7Hs4GeJkQ</data>
+      <data key="d1">0.971338</data>
+      <data key="d2">0.161097</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="3"> 
+      <data key="d0">fxv-YhT3Ixc</data>
+      <data key="d1">0.840764</data>
+      <data key="d2">0.567781</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="4"> 
+      <data key="d0">EWUK5A-3LSI</data>
+      <data key="d1">0.182325</data>
+      <data key="d2">0.296658</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="5"> 
+      <data key="d0">w1u9IgepfAU</data>
+      <data key="d1">0.0812102</data>
+      <data key="d2">0.296658</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="6"> 
+      <data key="d0">1EuF7yfoyDE</data>
+      <data key="d1">0.0429936</data>
+      <data key="d2">0.432219</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <node id="7"> 
+      <data key="d0">y4BKfR5t1l8</data>
+      <data key="d1">0.934713</data>
+      <data key="d2">0.296658</data>
+      <data key="d5">ellipse</data>
+    </node>
+    <edge id="e1" directed="false" source="0" target="1"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e2" directed="false" source="0" target="2"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e3" directed="false" source="0" target="3"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e4" directed="false" source="1" target="2"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e5" directed="false" source="1" target="3"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e6" directed="false" source="1" target="4"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e7" directed="false" source="1" target="5"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e8" directed="false" source="1" target="6"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e9" directed="false" source="1" target="7"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e10" directed="false" source="2" target="3"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e11" directed="false" source="2" target="4"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e12" directed="false" source="2" target="5"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e13" directed="false" source="2" target="7"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e14" directed="false" source="4" target="5"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e15" directed="false" source="4" target="6"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e16" directed="false" source="4" target="7"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e17" directed="false" source="5" target="6"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e18" directed="false" source="5" target="7"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+    <edge id="e19" directed="false" source="6" target="7"> 
+      <data key="d8">1</data> 
+      <data key="d10">0-&gt;1</data> 
+    </edge>
+  </graph>
+</graphml>
