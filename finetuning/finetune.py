@@ -13,9 +13,6 @@ def get_hf_token():
 
 HF_USERNAME, HF_TOKEN = get_hf_token() # get token from https://huggingface.co/settings/token
 
-
-print(HF_USERNAME, HF_TOKEN)
-
 params = TextClassificationParams(
     model="cardiffnlp/twitter-xlm-roberta-base-sentiment-multilingual",
     data_path="data/", #"Lyreck/tiktok_brat_comments", # path to the dataset on huggingface hub
